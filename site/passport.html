@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Passport</title>
+<link rel="stylesheet" href="style.css">
+<script src="config.js"></script>
+</head>
+<body>
+
+<div class="passport-cover">
+  <p class="eyebrow">World Stalls Event</p>
+  <h1 id="heading">My Passport</h1>
+
+  <div id="loading-step">
+    <div class="spinner"></div>
+  </div>
+
+  <div id="content-step" style="display:none;">
+    <p class="id-code" id="id-display"></p>
+
+    <div id="complete-banner" class="complete-banner" style="display:none;">
+      All six stamps collected — congratulations, world traveller!
+    </div>
+
+    <div class="badge-grid" id="badge-grid"></div>
+
+    <p class="progress-line" id="progress-text"></p>
+    <p class="hint">Keep this page's link or QR code — it always shows your latest stamps, on any device.</p>
+  </div>
+
+  <div id="error-step" style="display:none;">
+    <p class="status-banner error" id="error-message"></p>
+    <a class="link-btn" href="index.html">Register for a passport &rarr;</a>
+  </div>
+</div>
+
+<script>
+const params = new URLSearchParams(location.search);
+const id = params.get('id') || localStorage.getItem('passportId');
+
+function renderBadges(stamps) {
+  const grid = document.getElementById('badge-grid');
+  grid.innerHTML = '';
+  let collected = 0;
+
+  COUNTRIES.forEach(c => {
+    const got = !!stamps[c.code];
+    if (got) collected++;
+
+    const wrap = document.createElement('div');
+    wrap.className = 'badge-wrap';
+
+    const badge = document.createElement('div');
+    badge.className = 'badge' + (got ? '' : ' empty');
+
+    if (got) {
+      const img = document.createElement('img');
+      img.src = flagUrl(c.flag);
+      img.alt = c.name + ' flag';
+      badge.appendChild(img);
+    }
+
+    const label = document.createElement('span');
+    label.className = 'country-name';
+    label.textContent = c.name;
+    badge.appendChild(label);
+
+    wrap.appendChild(badge);
+    grid.appendChild(wrap);
+  });
+
+  document.getElementById('progress-text').textContent = `${collected} of ${COUNTRIES.length} stamps collected`;
+  document.getElementById('complete-banner').style.display = collected === COUNTRIES.length ? 'block' : 'none';
+}
+
+async function load() {
+  if (!id) {
+    document.getElementById('loading-step').style.display = 'none';
+    document.getElementById('error-step').style.display = 'block';
+    document.getElementById('error-message').textContent = "We couldn't find a passport on this device.";
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API_URL}?action=status&id=${encodeURIComponent(id)}`);
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+
+    localStorage.setItem('passportId', id);
+
+    document.getElementById('loading-step').style.display = 'none';
+    document.getElementById('content-step').style.display = 'block';
+    document.getElementById('id-display').textContent = data.id;
+    renderBadges(data.stamps || {});
+  } catch (err) {
+    document.getElementById('loading-step').style.display = 'none';
+    document.getElementById('error-step').style.display = 'block';
+    document.getElementById('error-message').textContent = 'Could not load passport: ' + err.message;
+  }
+}
+
+load();
+</script>
+
+</body>
+</html>
