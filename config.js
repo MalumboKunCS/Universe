@@ -1,8 +1,6 @@
-// Paste your Apps Script Web App deployment URL here.
+
 const API_URL = 'https://script.google.com/macros/s/AKfycbwjpkveKP6BTqGqm9eBHxI7eJBnCxflgY5Krmu9SA6xiCS5tMBD5y24VqXXfOEuC4f-yw/exec';
 
-// The six stalls. `code` must match VALID_STALLS in Code.gs.
-// `flag` uses flagcdn.com's free public flag images (ISO country codes).
 const COUNTRIES = [
   { code: 'zambia',      name: 'Zambia',        flag: 'zm' },
   { code: 'russia',      name: 'Russia',        flag: 'ru' },
