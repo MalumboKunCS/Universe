@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Collecting Stamp…</title>
+<link rel="stylesheet" href="style.css">
+<script src="config.js"></script>
+</head>
+<body>
+
+<div class="passport-cover">
+  <p class="eyebrow">World Stalls Event</p>
+  <h1 id="heading">One moment</h1>
+
+  <div id="loading-step">
+    <div class="spinner"></div>
+    <p class="hint" style="text-align:center;">Stamping your passport…</p>
+  </div>
+
+  <div id="need-id-step" style="display:none;">
+    <p class="subtitle">We couldn't find your passport on this device.</p>
+    <label for="manual-id">Enter your passport ID</label>
+    <input type="text" id="manual-id" placeholder="e.g. A7K2M9" autocomplete="off">
+    <button id="submit-id-btn">Continue</button>
+    <p class="hint">Don't have one yet? <a class="link-btn" href="index.html" style="display:inline;">Register here</a> first.</p>
+  </div>
+
+  <div id="result-step" style="display:none;">
+    <div style="text-align:center;">
+      <span class="stamp-mark" id="stamp-mark"></span>
+    </div>
+    <p class="hint" id="result-message" style="text-align:center;"></p>
+    <a class="link-btn" href="#" id="passport-link">View my full passport &rarr;</a>
+  </div>
+</div>
+
+<script>
+const params = new URLSearchParams(location.search);
+const stall = (params.get('stall') || '').toLowerCase();
+const country = COUNTRIES.find(c => c.code === stall);
+
+document.getElementById('heading').textContent = country ? country.name + ' Stall' : 'Unknown Stall';
+
+function passportUrlFor(id) {
+  return `${location.origin}${location.pathname.replace('collect.html','')}passport.html?id=${id}`;
+}
+
+async function doCollect(id) {
+  document.getElementById('need-id-step').style.display = 'none';
+  document.getElementById('loading-step').style.display = 'block';
+
+  try {
+    const res = await fetch(`${API_URL}?action=collect&id=${encodeURIComponent(id)}&stall=${encodeURIComponent(stall)}`);
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+
+    localStorage.setItem('passportId', id);
+
+    document.getElementById('loading-step').style.display = 'none';
+    document.getElementById('result-step').style.display = 'block';
+    document.getElementById('stamp-mark').textContent = country ? country.name : stall;
+    document.getElementById('result-message').textContent =
+      data.status === 'already'
+        ? "You've already collected this stamp."
+        : 'Stamp collected! Safe travels to the next stall.';
+    document.getElementById('passport-link').href = passportUrlFor(id);
+  } catch (err) {
+    document.getElementById('loading-step').style.display = 'none';
+    document.getElementById('result-step').style.display = 'block';
+    document.getElementById('stamp-mark').textContent = '!';
+    document.getElementById('result-message').textContent = 'Could not collect stamp: ' + err.message;
+  }
+}
+
+function init() {
+  if (!country) {
+    document.getElementById('loading-step').style.display = 'none';
+    document.getElementById('result-step').style.display = 'block';
+    document.getElementById('result-message').textContent = 'This stall QR code is not recognized.';
+    return;
+  }
+
+  const storedId = localStorage.getItem('passportId');
+  const urlId = params.get('id');
+  const id = urlId || storedId;
+
+  if (id) {
+    doCollect(id);
+  } else {
+    document.getElementById('loading-step').style.display = 'none';
+    document.getElementById('need-id-step').style.display = 'block';
+  }
+}
+
+document.getElementById('submit-id-btn').addEventListener('click', () => {
+  const id = document.getElementById('manual-id').value.trim().toUpperCase();
+  if (id) doCollect(id);
+});
+
+init();
+</script>
+
+</body>
+</html>
