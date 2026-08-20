@@ -172,11 +172,10 @@ button:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow
 }
 
 .badge img {
-  width: 68%;
-  height: 68%;
+  width: 84%;
+  height: 84%;
   object-fit: cover;
   border-radius: 50%;
-  border: 2px solid rgba(255,255,255,0.85);
 }
 
 .badge .country-name {
