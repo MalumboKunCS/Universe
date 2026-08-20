@@ -25,7 +25,7 @@
 </head>
 <body>
 
-<p class="no-print"><strong>Admin only:</strong> print (Ctrl/Cmd+P) </p>
+<p class="no-print"><strong>Admin only:</strong> open this page once your site is live on GitHub Pages, then print (Ctrl/Cmd+P). Cut out each card and place it at the matching stall.</p>
 
 <div class="sheet" id="sheet"></div>
 
@@ -36,7 +36,7 @@ COUNTRIES.forEach(c => {
   const card = document.createElement('div');
   card.className = 'card';
   card.innerHTML = `
-    <img class="flag" src="${flagUrl(c.flag)}" alt="${c.name} flag">
+    <img class="flag" src="${c.badge}" alt="${c.name} stamp">
     <h2>${c.name}</h2>
     <div class="qr" id="qr-${c.code}"></div>
     <p>Scan to collect your stamp</p>
