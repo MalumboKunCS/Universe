@@ -1,15 +1,10 @@
-
-const API_URL = 'https://script.google.com/macros/s/AKfycbwjpkveKP6BTqGqm9eBHxI7eJBnCxflgY5Krmu9SA6xiCS5tMBD5y24VqXXfOEuC4f-yw/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbz8cNalqygECNmxx7C1oUKWJEpS8sUZjfPXmBrR6hH0Ey6LkK3vYiiacOUOUJ0lL4sn/exec';
 
 const COUNTRIES = [
-  { code: 'zambia',      name: 'Zambia',        flag: 'zm' },
-  { code: 'russia',      name: 'Russia',        flag: 'ru' },
-  { code: 'canada',      name: 'Canada',        flag: 'ca' },
-  { code: 'southafrica', name: 'South Africa',  flag: 'za' },
-  { code: 'china',       name: 'China',         flag: 'cn' },
-  { code: 'japan',       name: 'Japan',         flag: 'jp' },
+  { code: 'global',      name: 'Global',        badge: 'badges/global.jpeg' },
+  { code: 'russia',      name: 'Russia',        badge: 'badges/russia.jpeg' },
+  { code: 'canada',      name: 'Canada',        badge: 'badges/canada.jpeg' },
+  { code: 'southafrica', name: 'South Africa',  badge: 'badges/southafrica.png' },
+  { code: 'china',       name: 'China',         badge: 'badges/china.jpeg' },
+  { code: 'japan',       name: 'Japan',         badge: 'badges/japan.png' },
 ];
-
-function flagUrl(isoCode) {
-  return `https://flagcdn.com/w320/${isoCode}.png`;
-}
